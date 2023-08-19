@@ -1,3 +1,5 @@
+import { filterValuesType } from "./App";
+
 export type TaskType = {
   id: number;
   title: string;
@@ -5,10 +7,17 @@ export type TaskType = {
 };
 
 export type ToDoListPRops = {
-    title: string;
-    tasksList: TaskType[];
+  title: string;
+  tasksList: TaskType[];
+  removeTaskHandler: (id: number) => void;
+  setFilter: (value: filterValuesType) => void;
 };
-export const TodoList = ({ title,  tasksList}: ToDoListPRops) => {
+export const TodoList = ({
+  title,
+  tasksList,
+  removeTaskHandler,
+  setFilter,
+}: ToDoListPRops) => {
   return (
     <div>
       <h3>{title}</h3>
@@ -17,22 +26,38 @@ export const TodoList = ({ title,  tasksList}: ToDoListPRops) => {
         <button>+</button>
       </div>
       <ul>
-        {tasksList.map((el) => (
-          <li key={el.id}>
-            <input
-              type="checkbox"
-              name=""
-              id={String(el.id)}
-              checked={el.isDone}
-            />
-            <span>{el.title}</span>
+        {tasksList.map(({ id, isDone, title }) => (
+          <li key={id}>
+            <input type="checkbox" name="" id={String(id)} checked={isDone} />
+            <span>{title}</span>
+            <button
+              onClick={() => {
+                removeTaskHandler(id);
+              }}>
+              X
+            </button>
           </li>
         ))}
       </ul>
       <div>
-        <button>All</button>
-        <button>Active</button>
-        <button>Complited</button>
+        <button
+          onClick={() => {
+            setFilter("all");
+          }}>
+          All
+        </button>
+        <button
+          onClick={() => {
+            setFilter("active");
+          }}>
+          Active
+        </button>
+        <button
+          onClick={() => {
+            setFilter("completed");
+          }}>
+          Completed
+        </button>
       </div>
     </div>
   );
