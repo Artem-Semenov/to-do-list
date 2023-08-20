@@ -13,6 +13,8 @@ export type ToDoListProps = {
   removeTaskHandler: (id: string) => void;
   changeFilter: (value: filterValuesType) => void;
   addTaskFunc: (name: string) => void;
+  changeStatus: (id: string) => void;
+  filter: filterValuesType;
 };
 
 export const TodoList = ({
@@ -21,16 +23,25 @@ export const TodoList = ({
   removeTaskHandler,
   changeFilter,
   addTaskFunc,
+  changeStatus,
+  filter,
 }: ToDoListProps) => {
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const addTask = () => {
-    addTaskFunc(newTaskTitle);
+    const taskTitle = newTaskTitle.trim();
+    if (!taskTitle) {
+      setError("Field is required");
+      return;
+    }
+    addTaskFunc(taskTitle);
     setNewTaskTitle("");
   };
 
   const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && e.ctrlKey) {
+    setError(null);
+    if (e.key === "Enter") {
       addTask();
     }
   };
@@ -41,7 +52,7 @@ export const TodoList = ({
   const onAllClick = () => changeFilter("all");
   const onActiveClick = () => changeFilter("active");
   const onCompletedClick = () => changeFilter("completed");
-
+  console.log(filter);
   return (
     <div>
       <h3>{title}</h3>
@@ -51,15 +62,26 @@ export const TodoList = ({
           value={newTaskTitle}
           onKeyDown={onInputKeyDown}
           onChange={onChangeHandler}
+          className={error ? "error" : ""}
         />
         <button onClick={addTask}>+</button>
+        {error && <div className="error-message">{error}</div>}
       </div>
       <ul>
         {tasksList.map(({ id, isDone, title }) => {
           const onRemoveHandler = () => removeTaskHandler(id);
+          const onChangeHandler = () => {
+            changeStatus(id);
+          };
           return (
-            <li key={id}>
-              <input type="checkbox" name="" id={id} checked={isDone} />
+            <li key={id} className={isDone ? "is-done" : ""}>
+              <input
+                type="checkbox"
+                name=""
+                id={id}
+                checked={isDone}
+                onChange={onChangeHandler}
+              />
               <span>{title}</span>
               <button onClick={onRemoveHandler}>X</button>
             </li>
@@ -67,9 +89,21 @@ export const TodoList = ({
         })}
       </ul>
       <div>
-        <button onClick={onAllClick}>All</button>
-        <button onClick={onActiveClick}>Active</button>
-        <button onClick={onCompletedClick}>Completed</button>
+        <button
+          onClick={onAllClick}
+          className={filter === "all" ? "active-filter" : ""}>
+          All
+        </button>
+        <button
+          onClick={onActiveClick}
+          className={filter === "active" ? "active-filter" : ""}>
+          Active
+        </button>
+        <button
+          onClick={onCompletedClick}
+          className={filter === "completed" ? "active-filter" : ""}>
+          Completed
+        </button>
       </div>
     </div>
   );

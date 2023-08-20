@@ -28,6 +28,15 @@ function App() {
     setFilter(value);
   };
 
+  const changeStatus = (id: string) => {
+    const tasksCopy = [...tasks];
+    const task = tasksCopy.find((el) => el.id === id);
+    if (task) {
+      task.isDone = !task?.isDone;
+      setTasks(tasksCopy);
+    }
+  };
+
   const addTask = (name: string) => {
     let newTask: TaskType = {
       id: v1(),
@@ -54,6 +63,8 @@ function App() {
     removeTaskHandler: removeTaskHandler,
     changeFilter: changeFilter,
     addTaskFunc: addTask,
+    changeStatus: changeStatus,
+    filter: filter,
   };
 
   return (
