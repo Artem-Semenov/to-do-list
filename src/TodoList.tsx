@@ -10,11 +10,13 @@ export type TaskType = {
 export type ToDoListProps = {
   title: string;
   tasksList: TaskType[];
-  removeTaskHandler: (id: string) => void;
-  changeFilter: (value: filterValuesType) => void;
-  addTaskFunc: (name: string) => void;
-  changeStatus: (id: string) => void;
+  removeTaskHandler: (id: string, toDoListId: string) => void;
+  changeFilter: (value: filterValuesType, toDoListId: string) => void;
+  addTaskFunc: (name: string, toDoListId: string) => void;
+  changeStatus: (id: string, toDoListId: string) => void;
   filter: filterValuesType;
+  toDoListId: string;
+  removeToDoList: (toDoListId: string) => void;
 };
 
 export const TodoList = ({
@@ -25,6 +27,8 @@ export const TodoList = ({
   addTaskFunc,
   changeStatus,
   filter,
+  toDoListId,
+  removeToDoList,
 }: ToDoListProps) => {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +39,7 @@ export const TodoList = ({
       setError("Field is required");
       return;
     }
-    addTaskFunc(taskTitle);
+    addTaskFunc(taskTitle, toDoListId);
     setNewTaskTitle("");
   };
 
@@ -45,17 +49,24 @@ export const TodoList = ({
       addTask();
     }
   };
+
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setNewTaskTitle(e.currentTarget.value);
   };
 
-  const onAllClick = () => changeFilter("all");
-  const onActiveClick = () => changeFilter("active");
-  const onCompletedClick = () => changeFilter("completed");
-  console.log(filter);
+  const onAllClick = () => changeFilter("all", toDoListId);
+
+  const onActiveClick = () => changeFilter("active", toDoListId);
+
+  const onCompletedClick = () => changeFilter("completed", toDoListId);
+
+  const deleteToDoList = () => removeToDoList(toDoListId);
+
   return (
     <div>
-      <h3>{title}</h3>
+      <h3>
+        {title} <button onClick={deleteToDoList}>X</button>
+      </h3>
       <div>
         <input
           type="text"
@@ -69,9 +80,9 @@ export const TodoList = ({
       </div>
       <ul>
         {tasksList.map(({ id, isDone, title }) => {
-          const onRemoveHandler = () => removeTaskHandler(id);
+          const onRemoveHandler = () => removeTaskHandler(id, toDoListId);
           const onChangeHandler = () => {
-            changeStatus(id);
+            changeStatus(id, toDoListId);
           };
           return (
             <li key={id} className={isDone ? "is-done" : ""}>
