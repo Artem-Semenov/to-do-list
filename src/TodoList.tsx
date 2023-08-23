@@ -1,6 +1,9 @@
 import { filterValuesType } from "./App";
 import { AddItemForm } from "./AddItemForm";
 import { EditableSpan } from "./EditableSpan";
+import { Button, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Checkbox from "@mui/material/Checkbox";
 
 export type TaskType = {
   id: string;
@@ -60,10 +63,15 @@ export const TodoList = ({
             changeListTitle(newValue, toDoListId)
           }
         />{" "}
-        <button onClick={deleteToDoList}>X</button>
+        <IconButton
+          aria-label="delete"
+          onClick={deleteToDoList}
+          title="delete to-do list">
+          <DeleteIcon />
+        </IconButton>
       </h3>
       <AddItemForm addItemFunc={addTask} />
-      <ul>
+      <div>
         {tasksList.map(({ id, isDone, title }) => {
           const onRemoveHandler = () => removeTaskHandler(id, toDoListId);
           const onChangeHandler = () => {
@@ -73,36 +81,35 @@ export const TodoList = ({
             changeTaskTitle(newValue, toDoListId, id);
           };
           return (
-            <li key={id} className={isDone ? "is-done" : ""}>
-              <input
-                type="checkbox"
-                name=""
-                id={id}
-                checked={isDone}
-                onChange={onChangeHandler}
-              />
+            <div key={id} className={isDone ? "is-done" : ""}>
+              <Checkbox checked={isDone} onChange={onChangeHandler} />
               <EditableSpan title={title} onChangeTitle={onChangeTitle} />
-              <button onClick={onRemoveHandler}>X</button>
-            </li>
+              <IconButton
+                aria-label="delete"
+                onClick={onRemoveHandler}
+                title="delete task">
+                <DeleteIcon />
+              </IconButton>
+            </div>
           );
         })}
-      </ul>
+      </div>
       <div>
-        <button
+        <Button
           onClick={onAllClick}
-          className={filter === "all" ? "active-filter" : ""}>
+          variant={filter === "all" ? "contained" : undefined}>
           All
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onActiveClick}
-          className={filter === "active" ? "active-filter" : ""}>
+          variant={filter === "active" ? "contained" : undefined}>
           Active
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onCompletedClick}
-          className={filter === "completed" ? "active-filter" : ""}>
+          variant={filter === "completed" ? "contained" : undefined}>
           Completed
-        </button>
+        </Button>
       </div>
     </div>
   );
